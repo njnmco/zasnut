@@ -1,4 +1,4 @@
-//Copyright (c) 2021 Neal Fultz. All rights reserved.
+// Copyright (c) 2021 Neal Fultz. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -6,7 +6,7 @@
 // 1. Redistributions of source code must retain the above copyright notice,
 // this list of conditions and the following disclaimer.
 //
-// 2. Redistributions in binary form must reproduce the above copyright notice,
+// 2. Redistributions in other forms must reproduce the above copyright notice,
 // this list of conditions and the following disclaimer in the documentation
 // and/or other materials provided with the distribution.
 //
@@ -29,19 +29,25 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
- 
-
 chrome.tabs.onActivated.addListener(function(active) {
     chrome.alarms.create(active.tabId.toString(), {periodInMinutes: 2});
-})
+    chrome.alarms.clear(active.tabId+"zzz");
+});
 
-chrome.tabs.onRemoved.addListener((tId) => chrome.alarms.clear(tId.toString()));
+chrome.tabs.onRemoved.addListener(function(tId) {
+    chrome.alarms.clear(tId.toString());
+    chrome.alarms.clear(tId+"zzz");
+});
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
     chrome.tabs.get(parseInt(alarm.name), (t) => {
         if (t.active || t.audible || t.pinned || !t.autoDiscardable)
             return true;
-        chrome.tabs.discard(t.id);
+        if (alarm.name.endsWith("zzz")) {
+            chrome.tabs.discard(t.id);
+        } else {
+            chrome.alarms.create(t.id + "zzz", {periodInMinutes: 2});
+        }
         chrome.alarms.clear(alarm.name);
     })
 })
