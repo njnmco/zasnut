@@ -30,20 +30,26 @@
 // POSSIBILITY OF SUCH DAMAGE.
 
 chrome.tabs.onActivated.addListener(function(active) {
-    chrome.alarms.create(active.tabId.toString(), {periodInMinutes: 2});
+    chrome.alarms.create(active.tabId+"new", {periodInMinutes: 2});
     chrome.alarms.clear(active.tabId+"zzz");
 });
 
 chrome.tabs.onRemoved.addListener(function(tId) {
-    chrome.alarms.clear(tId.toString());
+    chrome.alarms.clear(tId+"new");
     chrome.alarms.clear(tId+"zzz");
+});
+
+chrome.tabs.onCreated.addListener(function(tab) {
+    chrome.alarms.create(tab.tabId+ "new", {periodInMinutes: 5});
 });
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
     chrome.tabs.get(parseInt(alarm.name), (t) => {
-        if (t.active || t.audible || t.pinned || !t.autoDiscardable)
+        if (chrome.runtime.lastError) {
+            //
+        } else if (t.active || t.audible || t.pinned || !t.autoDiscardable)
             return true;
-        if (alarm.name.endsWith("zzz")) {
+        } else if (alarm.name.endsWith("zzz")) {
             chrome.tabs.discard(t.id);
         } else {
             chrome.alarms.create(t.id + "zzz", {periodInMinutes: 2});

@@ -22,7 +22,6 @@ When this extension is installed, tabs will automatically unload around
 1. Clone this project
 2. In Chrome | Extensions, enable Developer Mode.
 3. Click "load unpacked", choose the project folder.
-4. Done
 
 ## License
 
