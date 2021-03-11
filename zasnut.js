@@ -47,7 +47,7 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
     chrome.tabs.get(parseInt(alarm.name), (t) => {
         if (chrome.runtime.lastError) {
             //
-        } else if (t.active || t.audible || t.pinned || !t.autoDiscardable)
+        } else if (t.active || t.audible || t.pinned || !t.autoDiscardable) {
             return true;
         } else if (alarm.name.endsWith("zzz")) {
             chrome.tabs.discard(t.id);
