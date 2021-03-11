@@ -40,11 +40,11 @@ chrome.tabs.onRemoved.addListener(function(tId) {
 });
 
 chrome.tabs.onCreated.addListener(function(tab) {
-    chrome.alarms.create(tab.tabId+ "new", {periodInMinutes: 5});
+    chrome.alarms.create(tab.id+ "new", {periodInMinutes: 5});
 });
 
 chrome.alarms.onAlarm.addListener(function(alarm) {
-    chrome.tabs.get(parseInt(alarm.name), (t) => {
+    chrome.tabs.get(Number(alarm.name.replace(/[^\d]+/, '')), (t) => {
         if (chrome.runtime.lastError) {
             //
         } else if (t.active || t.audible || t.pinned || !t.autoDiscardable) {
