@@ -32,6 +32,18 @@
 chrome.tabs.onActivated.addListener(function(active) {
     chrome.alarms.create(active.tabId+"new", {periodInMinutes: 2});
     chrome.alarms.clear(active.tabId+"zzz");
+
+    // there appears to be a bug where activated discarded tabs are not
+    // reloaded automatically, so working around that by manually
+    // triggering a reload after setTimeout. If/when that's fixed, can
+    // be removed.
+    setTimeout( async function() {
+        let tab = await chrome.tabs.get(active.tabId)
+        chrome.action.setBadgeText({
+            text: tab.autoDiscardable ? "" : "awake"
+        })
+        if(tab.active && tab.discarded) chrome.tabs.reload(tab.id);
+      }, 1200)
 });
 
 chrome.tabs.onRemoved.addListener(function(tId) {
@@ -59,3 +71,9 @@ chrome.alarms.onAlarm.addListener(function(alarm) {
 })
 
   
+chrome.action.onClicked.addListener( async function(tab) {
+    tab = await chrome.tabs.update(tab.id, {autoDiscardable: !tab.autoDiscardable})
+    chrome.action.setBadgeText({
+        text: tab.autoDiscardable ? "" : "awake"
+    })
+})

@@ -2,8 +2,9 @@
     "manifest_version": 3,
     "name" : "zasnut (tab suspender)",
     "description" : "puts tabs to sleep",
-    "version": "0.2.2",
+    "version": "0.3.0",
     "permissions": ["alarms"],
+    "action" : {},
     "background": {
         "service_worker": "zasnut.js"
     }
